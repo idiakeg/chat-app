@@ -1,5 +1,7 @@
 import React from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../firebase";
 import { doc, setDoc, Timestamp } from "firebase/firestore";
@@ -14,6 +16,8 @@ const Register = () => {
 	});
 
 	const { name, email, password, error, loading } = data;
+
+	const history = useNavigate();
 
 	const handleChange = (e) => {
 		setData({
@@ -39,13 +43,12 @@ const Register = () => {
 		}
 
 		try {
-			// the block of code below helps us create a new user. The new user is added to our authentication "database", not firestore
 			const result = await createUserWithEmailAndPassword(
 				auth,
 				email,
 				password
 			);
-			// the block of code below helps us add the user created to our firestore data base. doc("reference to our firestore as seen in our firebase.js file", n"ame of our target firestore collection", "the id of the user we just created")
+
 			await setDoc(doc(db, "users", result.user.uid), {
 				name,
 				email,
@@ -54,7 +57,6 @@ const Register = () => {
 				isOnline: true,
 			});
 
-			// after successfully creating(and/ or authenticating the user, we can then proceed to reset the data)
 			setData({
 				name: "",
 				email: "",
@@ -62,8 +64,10 @@ const Register = () => {
 				error: null,
 				loading: false,
 			});
+
+			// After authentication, redrect the user to the home page
+			history("/");
 		} catch (error) {
-			// if there is an error, set the error to be the error message
 			console.log(error);
 			setData({
 				...data,
