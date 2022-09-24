@@ -2,20 +2,19 @@ import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../firebase";
-import { doc, setDoc, Timestamp } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 
-const Register = () => {
+const Login = () => {
 	const [data, setData] = useState({
-		name: "",
 		email: "",
 		password: "",
 		error: null,
 		loading: false,
 	});
 
-	const { name, email, password, error, loading } = data;
+	const { email, password, error, loading } = data;
 
 	const history = useNavigate();
 
@@ -35,30 +34,22 @@ const Register = () => {
 			loading: true,
 		});
 
-		if (name === "" || password === "" || email === "") {
+		if (password === "" || email === "") {
 			setData({
 				...data,
 				error: "All fields are required!",
 			});
+			return;
 		}
 
 		try {
-			const result = await createUserWithEmailAndPassword(
-				auth,
-				email,
-				password
-			);
+			const result = await signInWithEmailAndPassword(auth, email, password);
 
-			await setDoc(doc(db, "users", result.user.uid), {
-				name,
-				email,
-				uid: result.user.uid,
-				createdAt: Timestamp.fromDate(new Date()),
+			await updateDoc(doc(db, "users", result.user.uid), {
 				isOnline: true,
 			});
 
 			setData({
-				name: "",
 				email: "",
 				password: "",
 				error: null,
@@ -78,17 +69,8 @@ const Register = () => {
 	return (
 		<div className="route__container">
 			<section>
-				<h3>Create Account</h3>
+				<h3>Login to your Account</h3>
 				<form onSubmit={handleSubmit}>
-					<div className="input_group">
-						<label htmlFor="name">Name</label>
-						<input
-							name="name"
-							type="text"
-							value={name}
-							onChange={handleChange}
-						/>
-					</div>
 					<div className="input_group">
 						<label htmlFor="email">Email</label>
 						<input
@@ -109,7 +91,7 @@ const Register = () => {
 					</div>
 					{error && <p className="error">{error}</p>}
 					<button disabled={loading} type="submit">
-						{loading ? "Creating..." : "Register"}
+						{loading ? "Loging in..." : "Login"}
 					</button>
 				</form>
 			</section>
@@ -117,4 +99,4 @@ const Register = () => {
 	);
 };
 
-export default Register;
+export default Login;
