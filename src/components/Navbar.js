@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import { signOut } from "firebase/auth";
@@ -8,12 +8,15 @@ import authContext from "../contexts/authContext";
 const Navbar = () => {
 	const { user } = useContext(authContext);
 
+	const history = useNavigate();
+
 	const handleLogOut = async () => {
-		// when we log out the user, we want to update the user's online status to false aswell
-		updateDoc(doc(db, "users", auth.currentUser.uid), {
+		await updateDoc(doc(db, "users", auth.currentUser.uid), {
 			isOnline: false,
 		});
-		signOut(auth);
+		await signOut(auth);
+		// redirecting user to login page
+		history("/login");
 	};
 
 	return (
