@@ -15,6 +15,7 @@ const Navbar = () => {
 			isOnline: false,
 		});
 		await signOut(auth);
+		localStorage.setItem("isLoggedIn", false);
 		// redirecting user to login page
 		history("/login");
 	};
