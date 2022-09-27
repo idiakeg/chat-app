@@ -1,31 +1,20 @@
-import React from "react";
-import { useState } from "react";
+import { useContext } from "react";
+import authContext from "../contexts/authContext";
 import { useNavigate } from "react-router-dom";
-
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../firebase";
 import { doc, setDoc, Timestamp } from "firebase/firestore";
 
 const Register = () => {
-	const [data, setData] = useState({
-		name: "",
-		email: "",
-		password: "",
-		error: null,
-		loading: false,
-	});
+	const { name, email, password, error, loading, data, setData, handleChange } =
+		useContext(authContext);
 
-	const { name, email, password, error, loading } = data;
-
+	// =====Use Navigate / history definitions======
 	const history = useNavigate();
 
-	const handleChange = (e) => {
-		setData({
-			...data,
-			[e.target.name]: e.target.value,
-		});
-	};
+	// ======= Event Handlers======
 
+	// ->Handle Submit
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
@@ -77,42 +66,46 @@ const Register = () => {
 
 	return (
 		<div className="route__container">
-			<section>
-				<h3>Create Account</h3>
-				<form onSubmit={handleSubmit}>
-					<div className="input_group">
-						<label htmlFor="name">Name</label>
-						<input
-							name="name"
-							type="text"
-							value={name}
-							onChange={handleChange}
-						/>
-					</div>
-					<div className="input_group">
-						<label htmlFor="email">Email</label>
-						<input
-							name="email"
-							type="email"
-							value={email}
-							onChange={handleChange}
-						/>
-					</div>
-					<div className="input_group">
-						<label htmlFor="password">Password</label>
-						<input
-							name="password"
-							type="password"
-							value={password}
-							onChange={handleChange}
-						/>
-					</div>
-					{error && <p className="error">{error}</p>}
-					<button disabled={loading} type="submit">
-						{loading ? "Creating..." : "Register"}
-					</button>
-				</form>
-			</section>
+			{loading ? (
+				<p>Loading...</p>
+			) : (
+				<section>
+					<h3>Create Account</h3>
+					<form onSubmit={handleSubmit}>
+						<div className="input_group">
+							<label htmlFor="name">Name</label>
+							<input
+								name="name"
+								type="text"
+								value={name}
+								onChange={handleChange}
+							/>
+						</div>
+						<div className="input_group">
+							<label htmlFor="email">Email</label>
+							<input
+								name="email"
+								type="email"
+								value={email}
+								onChange={handleChange}
+							/>
+						</div>
+						<div className="input_group">
+							<label htmlFor="password">Password</label>
+							<input
+								name="password"
+								type="password"
+								value={password}
+								onChange={handleChange}
+							/>
+						</div>
+						{error && <p className="error">{error}</p>}
+						<button disabled={loading} type="submit">
+							{loading ? "Creating..." : "Register"}
+						</button>
+					</form>
+				</section>
+			)}
 		</div>
 	);
 };
