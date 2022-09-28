@@ -19,7 +19,7 @@ const Navbar = () => {
 		});
 		await signOut(auth);
 		setIsLoading(false);
-		localStorage.setItem("isLoggedIn", false);
+		localStorage.removeItem("isLoggedIn");
 		history("/login");
 	};
 
