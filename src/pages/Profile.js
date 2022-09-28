@@ -2,7 +2,12 @@ import React, { useState, useEffect, useContext } from "react";
 import image from "../testimonial3.png";
 import { AiFillCamera } from "react-icons/ai";
 import { storage, db, auth } from "../firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+	ref,
+	uploadBytes,
+	getDownloadURL,
+	deleteObject,
+} from "firebase/storage";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import authContext from "../contexts/authContext";
 
@@ -20,7 +25,9 @@ const Profile = () => {
 		if (user) {
 			getDoc(doc(db, "users", auth.currentUser.uid)).then((docSnap) => {
 				if (docSnap.exists()) {
+					// let newUser = docSnap.data();
 					setCurrUser(docSnap.data());
+					// console.log(newUser);
 				}
 			});
 		}
@@ -31,6 +38,12 @@ const Profile = () => {
 					storage,
 					`avatar/${new Date().getTime()} - ${img.name}`
 				);
+
+				// Before uploading the image, we would like to check if an image already exists and delete it before we go ahead to upload the new on. to check if an image already exits, the avatara path comes in handy
+				if (currUser.avatarPath) {
+					await deleteObject(ref(storage, currUser.avatarPath));
+					console.log("image deleted");
+				}
 				const snap = await uploadBytes(imageRef, img);
 
 				const imageUrl = await getDownloadURL(ref(storage, snap.ref.fullPath));
