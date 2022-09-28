@@ -8,7 +8,9 @@ const authContext = createContext();
 
 export const AuthProvider = ({ children }) => {
 	//======= Use state definitions=======
-	const [user, setUser] = useState(null);
+	const [user, setUser] = useState(
+		JSON.parse(localStorage.getItem("isLogged"))
+	);
 	const [data, setData] = useState({
 		name: "",
 		email: "",
@@ -23,7 +25,7 @@ export const AuthProvider = ({ children }) => {
 		const unsub = onAuthStateChanged(auth, (data) => {
 			setUser(data);
 			if (data) {
-				localStorage.setItem("isLoggedIn", true);
+				localStorage.setItem("isLoggedIn", JSON.stringify(data));
 			}
 		});
 		return () => {
