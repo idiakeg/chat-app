@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import image from "../testimonial3.png";
-import { AiFillCamera } from "react-icons/ai";
+import { AiFillCamera, AiFillDelete } from "react-icons/ai";
 import { storage, db, auth } from "../firebase";
 import {
 	ref,
@@ -12,22 +12,45 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import authContext from "../contexts/authContext";
 
 const Profile = () => {
+	const { user } = useContext(authContext);
+
 	const [currUser, setCurrUser] = useState();
 	const [img, setImg] = useState(null);
+
+	// handleFileclick
 	const handleFileClick = (e) => {
 		let newImg = e.target.files[0];
 		setImg(newImg);
 	};
 
-	const { user } = useContext(authContext);
+	// handleDeleteAvatar
+	const handleDeleteAvatar = () => {
+		// we first include a prompt to make sure thar user actually wants to delete
+		const confirm = window.confirm("Delete Avatar?");
+		if (confirm) {
+			deleteObject(ref(storage, currUser.avatarPath))
+				.then(() => {
+					// File deleted successfully
+					console.log("file deleted successfully");
+					// update the user's avataar and avatarPath
+					updateDoc(doc(db, "users", currUser.uid), {
+						avatar: "",
+						avatarPath: "",
+					});
+					// --> optional: after deleting the image you can redirect the user to the home page(useNavigate gotchu)
+				})
+				.catch((error) => {
+					// Uh-oh, an error occurred!
+					console.log(error);
+				});
+		}
+	};
 
 	useEffect(() => {
 		if (user) {
 			getDoc(doc(db, "users", auth.currentUser.uid)).then((docSnap) => {
 				if (docSnap.exists()) {
-					// let newUser = docSnap.data();
 					setCurrUser(docSnap.data());
-					// console.log(newUser);
 				}
 			});
 		}
@@ -39,10 +62,8 @@ const Profile = () => {
 					`avatar/${new Date().getTime()} - ${img.name}`
 				);
 
-				// Before uploading the image, we would like to check if an image already exists and delete it before we go ahead to upload the new on. to check if an image already exits, the avatara path comes in handy
 				if (currUser.avatarPath) {
 					await deleteObject(ref(storage, currUser.avatarPath));
-					console.log("image deleted");
 				}
 				const snap = await uploadBytes(imageRef, img);
 
@@ -70,6 +91,12 @@ const Profile = () => {
 								<label htmlFor="photo">
 									<AiFillCamera />
 								</label>
+								{currUser.avatar && (
+									<AiFillDelete
+										onClick={handleDeleteAvatar}
+										className="delete"
+									/>
+								)}
 								<input
 									type="file"
 									accept="image/*"
