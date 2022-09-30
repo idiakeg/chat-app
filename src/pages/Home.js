@@ -1,9 +1,11 @@
-import { useEffect, useContext } from "react";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { useEffect, useContext, useState } from "react";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
 import authContext from "../contexts/authContext";
 
 const Home = () => {
+	// state definition to hold the array/list of other users, i.e users other than the autenthicated user
+	const [otherUsers, setOtherUsers] = useState([]);
 	const { user } = useContext(authContext);
 	useEffect(() => {
 		if (user) {
@@ -11,18 +13,25 @@ const Home = () => {
 				collection(db, "users"),
 				where("uid", "not-in", [user.uid])
 			);
-			// this runs just once and can be fine for other usage but i'd like to use a listener
-			getDocs(q)
-				.then((snapShot) => {
-					snapShot.docs.forEach((doc) => {
-						console.log(doc.data().uid);
-					});
-				})
-				.catch((err) => console.log(err.message));
-		} else {
-			console.log("No authenticated user");
+			//this method uses a listener so whenever there is a change to the users collection, the data obtained is updated
+			const unsub = onSnapshot(q, (querySnapshot) => {
+				// initialize an empty array that will eventually hold the data obtained
+				let otherUsers = [];
+				// loop over the querysnapshot and for each doc obtained, push it into the otherUSers array
+				querySnapshot.forEach((doc) => {
+					otherUsers.push(doc.data());
+				});
+
+				setOtherUsers(otherUsers);
+			});
+			// unsubscribing to the listener to prevent memory leaks
+			return () => {
+				unsub();
+			};
 		}
 	}, [user]);
+
+	console.log(otherUsers);
 
 	return <div>Home</div>;
 };
