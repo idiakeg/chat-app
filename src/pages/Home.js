@@ -2,6 +2,7 @@ import { useEffect, useContext, useState } from "react";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
 import authContext from "../contexts/authContext";
+import OtherUser from "../components/OtherUser";
 
 const Home = () => {
 	// state definition to hold the array/list of other users, i.e users other than the autenthicated user
@@ -13,27 +14,40 @@ const Home = () => {
 				collection(db, "users"),
 				where("uid", "not-in", [user.uid])
 			);
-			//this method uses a listener so whenever there is a change to the users collection, the data obtained is updated
 			const unsub = onSnapshot(q, (querySnapshot) => {
-				// initialize an empty array that will eventually hold the data obtained
 				let otherUsers = [];
-				// loop over the querysnapshot and for each doc obtained, push it into the otherUSers array
 				querySnapshot.forEach((doc) => {
 					otherUsers.push(doc.data());
 				});
 
 				setOtherUsers(otherUsers);
 			});
-			// unsubscribing to the listener to prevent memory leaks
 			return () => {
 				unsub();
 			};
 		}
 	}, [user]);
 
-	console.log(otherUsers);
+	// console.log(otherUsers);
 
-	return <div>Home</div>;
+	return (
+		<div className="home_container">
+			<div className="home_wrapper">
+				{otherUsers.length > 0 ? (
+					<>
+						<div className="other_users">
+							{otherUsers.map((otherUser, index) => {
+								return <OtherUser {...otherUser} key={index} />;
+							})}
+						</div>
+						<div className="chats"></div>
+					</>
+				) : (
+					<p>Loading . . .</p>
+				)}
+			</div>
+		</div>
+	);
 };
 
 export default Home;

@@ -158,3 +158,68 @@ form {
 .overlay svg {
 	font-size: 2.5rem;
 }
+
+/* ====Home container==== */
+.home_container {
+	width: 100%;
+	height: calc(100vh - 6rem);
+	background-color: #09afc5;
+}
+
+.home_wrapper {
+	width: 90%;
+	border: 1px solid black;
+	margin-inline: auto;
+	display: grid;
+	grid-template-columns: 1fr 2fr;
+}
+
+.other_users {
+	border-right: 2px solid black;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+/* ===Other Users=== */
+.otherUser_container {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 5px 10px;
+}
+
+.otherUser_container .img_container {
+	position: relative;
+}
+
+.otherUser_container .img_container img {
+	display: block;
+	object-fit: cover;
+	width: 70px;
+	height: 70px;
+	border-radius: 50%;
+}
+
+.otherUser_container .img_container .online_status {
+	position: absolute;
+	bottom: 1px;
+	right: 12px;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+}
+
+.otherUser_container .img_container .online_status.online {
+	background-color: #6cf36c;
+}
+
+.otherUser_container .img_container .online_status.offline {
+	background-color: #f72e2e;
+}
+
+.otherUser_container .display_name {
+	font-weight: bold;
+	text-transform: capitalize;
+	color: #383737;
+}
