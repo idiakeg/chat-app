@@ -7,6 +7,7 @@ import OtherUser from "../components/OtherUser";
 const Home = () => {
 	// state definition to hold the array/list of other users, i.e users other than the autenthicated user
 	const [otherUsers, setOtherUsers] = useState([]);
+	const [chat, setChat] = useState(null);
 	const { user } = useContext(authContext);
 	useEffect(() => {
 		if (user) {
@@ -28,7 +29,10 @@ const Home = () => {
 		}
 	}, [user]);
 
-	// console.log(otherUsers);
+	// ===Event handler
+	const selectUser = (selectedUser) => {
+		setChat(selectedUser);
+	};
 
 	return (
 		<div className="home_container">
@@ -37,10 +41,26 @@ const Home = () => {
 					<>
 						<div className="other_users">
 							{otherUsers.map((otherUser, index) => {
-								return <OtherUser {...otherUser} key={index} />;
+								return (
+									<OtherUser
+										selectUser={selectUser}
+										otherUser={otherUser}
+										key={index}
+									/>
+								);
 							})}
 						</div>
-						<div className="chats"></div>
+						<div className="chats">
+							{chat ? (
+								<div className="chat__container">
+									<h3>{chat.name}</h3>
+								</div>
+							) : (
+								<div className="no_chat">
+									Select a user to begin a conversation
+								</div>
+							)}
+						</div>
 					</>
 				) : (
 					<p>Loading . . .</p>

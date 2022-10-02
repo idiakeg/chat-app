@@ -1,11 +1,11 @@
 import React from "react";
 import Img from "../testimonial3.png";
 
-const OtherUser = (props) => {
-	const { name, avatar, isOnline } = props;
-	console.log(name, avatar, isOnline);
+const OtherUser = ({ otherUser, selectUser }) => {
+	const { avatar, isOnline, name } = otherUser;
+
 	return (
-		<div className="otherUser_container">
+		<div className="otherUser_container" onClick={() => selectUser(otherUser)}>
 			<div className="img_container">
 				<img src={avatar || Img} alt="user avatar" />
 				<span
