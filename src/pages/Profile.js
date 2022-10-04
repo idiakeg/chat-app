@@ -25,22 +25,16 @@ const Profile = () => {
 
 	// handleDeleteAvatar
 	const handleDeleteAvatar = () => {
-		// we first include a prompt to make sure thar user actually wants to delete
 		const confirm = window.confirm("Delete Avatar?");
 		if (confirm) {
 			deleteObject(ref(storage, currUser.avatarPath))
 				.then(() => {
-					// File deleted successfully
-					console.log("file deleted successfully");
-					// update the user's avataar and avatarPath
 					updateDoc(doc(db, "users", currUser.uid), {
 						avatar: "",
 						avatarPath: "",
 					});
-					// --> optional: after deleting the image you can redirect the user to the home page(useNavigate gotchu)
 				})
 				.catch((error) => {
-					// Uh-oh, an error occurred!
 					console.log(error);
 				});
 		}
