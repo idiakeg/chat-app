@@ -230,6 +230,7 @@ form {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
+	position: relative;
 }
 
 .chat__container {
@@ -249,4 +250,43 @@ form {
 	font-weight: bold;
 	text-transform: capitalize;
 	font-size: 1.8rem;
+}
+
+/* ======Message Form===== */
+.message_form {
+	/* position: absolute;
+	bottom: 0; */
+	display: flex;
+	flex-direction: row;
+	width: 80%;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 1rem;
+}
+
+.message_form label svg {
+	font-size: 2.5rem;
+	text-align: center;
+	cursor: pointer;
+}
+
+.message_form input[type="file"] {
+	display: none;
+}
+
+.message_form input[type="text"] {
+	width: 80%;
+	padding: 1rem 1.2rem;
+	border: none;
+	border-radius: 0.5rem;
+	outline: none;
+}
+
+.message_form button {
+	align-self: stretch;
+	font-weight: bold;
+	padding: 0.3rem 0.7rem;
+	border-radius: 0.5rem;
+	border: none;
+	cursor: pointer;
 }
