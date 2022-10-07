@@ -2,7 +2,6 @@ import React from "react";
 import Moment from "react-moment";
 
 const Message = ({ msg, user }) => {
-	// console.log(msg);
 	return (
 		<div className={`messages ${msg.from === user.uid ? "own" : "friend"} `}>
 			<p>

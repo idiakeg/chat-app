@@ -1,4 +1,4 @@
-import { useEffect, useContext, useState } from "react";
+import { useEffect, useContext, useState, useRef } from "react";
 import {
 	collection,
 	query,
@@ -21,6 +21,7 @@ const Home = () => {
 	const [msgText, setMsgText] = useState("");
 	const [payload, setPayload] = useState(null);
 	const [msgCollection, setMsgCollection] = useState([]);
+	const scrollRef = useRef();
 
 	const { user } = useContext(authContext);
 	useEffect(() => {
@@ -61,10 +62,12 @@ const Home = () => {
 				docs.forEach((doc) => msgData.push(doc.data()));
 				setMsgCollection(msgData);
 			});
-
-			console.log(msgCollection);
 		}
 	};
+
+	useEffect(() => {
+		scrollRef.current?.scrollIntoView({ behaviour: "smooth" });
+	}, [msgCollection]);
 
 	// --> handleSendMsg
 	const handleSendMsg = async (e) => {
@@ -128,6 +131,7 @@ const Home = () => {
 										) : (
 											<p>No conversation with this individual</p>
 										)}
+										<div ref={scrollRef}></div>
 									</div>
 									<div className="message_form_container">
 										<MessageForm
