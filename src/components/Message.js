@@ -1,0 +1,19 @@
+import React from "react";
+import Moment from "react-moment";
+
+const Message = ({ msg, user }) => {
+	// console.log(msg);
+	return (
+		<div className={`messages ${msg.from === user.uid ? "own" : "friend"} `}>
+			<p>
+				{msg.media && <img src={msg.media} alt={msg.text} />}
+				{msg.text}
+				<small>
+					<Moment fromNow>{msg.createdAt.toDate()}</Moment>
+				</small>
+			</p>
+		</div>
+	);
+};
+
+export default Message;

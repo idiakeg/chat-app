@@ -6,19 +6,21 @@ import {
 	onSnapshot,
 	addDoc,
 	Timestamp,
+	orderBy,
 } from "firebase/firestore";
 import { db, storage } from "../firebase";
 import authContext from "../contexts/authContext";
 import OtherUser from "../components/OtherUser";
 import MessageForm from "../components/MessageForm";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import Message from "../components/Message";
 
 const Home = () => {
-	// state definition to hold the array/list of other users, i.e users other than the autenthicated user
 	const [otherUsers, setOtherUsers] = useState([]);
 	const [chat, setChat] = useState(null);
 	const [msgText, setMsgText] = useState("");
 	const [payload, setPayload] = useState(null);
+	const [msgCollection, setMsgCollection] = useState([]);
 
 	const { user } = useContext(authContext);
 	useEffect(() => {
@@ -44,17 +46,32 @@ const Home = () => {
 	// ===Event handler
 	const selectUser = (selectedUser) => {
 		setChat(selectedUser);
-		// console.log(chat);
+		// upon selecting the user, we would like to also obtain the messages sent and stored in firebase
+		if (user) {
+			// the selectedUser.uid is used here instead of the chat.uid because pf the async nature of the setState call.
+			const combinedId =
+				user.uid > selectedUser.uid
+					? user.uid + selectedUser.uid
+					: selectedUser.uid + user.uid;
+
+			const msgsRef = collection(db, "messages", combinedId, "chats");
+			const q = query(msgsRef, orderBy("createdAt", "asc"));
+			onSnapshot(q, (docs) => {
+				let msgData = [];
+				docs.forEach((doc) => msgData.push(doc.data()));
+				setMsgCollection(msgData);
+			});
+
+			console.log(msgCollection);
+		}
 	};
 
+	// --> handleSendMsg
 	const handleSendMsg = async (e) => {
 		e.preventDefault();
-		// we will be creating another collection called "messages" to store conversations between users. Conversation between two users will have the same id(a combinaton of both their user ids)
 		const combinedId =
 			user.uid > chat.uid ? user.uid + chat.uid : chat.uid + user.uid;
-		// console.log(combinedId);
 
-		// initializing url to be assigned to the download url later on
 		let url;
 		if (payload) {
 			const payloadRef = ref(
@@ -100,15 +117,26 @@ const Home = () => {
 						<div className="chats">
 							{chat ? (
 								<>
-									<div className="chat__container">
+									<div className="chat_name">
 										<h3>{chat.name}</h3>
 									</div>
-									<MessageForm
-										msgText={msgText}
-										setMsgText={setMsgText}
-										handleSendMsg={handleSendMsg}
-										setPayload={setPayload}
-									/>
+									<div className="messages_container">
+										{msgCollection.length > 0 ? (
+											msgCollection.map((msgItem, index) => (
+												<Message user={user} msg={msgItem} key={index} />
+											))
+										) : (
+											<p>No conversation with this individual</p>
+										)}
+									</div>
+									<div className="message_form_container">
+										<MessageForm
+											msgText={msgText}
+											setMsgText={setMsgText}
+											handleSendMsg={handleSendMsg}
+											setPayload={setPayload}
+										/>
+									</div>
 								</>
 							) : (
 								<div className="no_chat">

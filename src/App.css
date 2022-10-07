@@ -167,13 +167,14 @@ form {
 }
 
 .home_wrapper {
-	width: 90%;
 	border: 1px solid black;
-	margin-inline: auto;
 	display: grid;
 	grid-template-columns: 1fr 2fr;
+	height: 100%;
+	/* border: 3px solid gold; */
 }
 
+/* ===Other Users=== */
 .other_users {
 	border-right: 2px solid black;
 	display: flex;
@@ -181,7 +182,6 @@ form {
 	gap: 0.5rem;
 }
 
-/* ===Other Users=== */
 .otherUser_container {
 	display: flex;
 	align-items: center;
@@ -229,20 +229,23 @@ form {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
 	position: relative;
 }
 
-.chat__container {
+.chat_name {
 	width: 100%;
-	height: 100%;
+	height: 50px;
+	border: 1px solid;
+	display: flex;
+	align-items: center;
+	justify-items: center;
+	border-bottom: 4px solid #1e4bed;
 }
 
-.chat__container h3 {
+.chat_name h3 {
 	margin: 0;
 	text-align: center;
-	border-bottom: 2px solid #1e4bed;
-	padding: 2rem;
+	width: 100%;
 	text-transform: capitalize;
 }
 
@@ -253,15 +256,22 @@ form {
 }
 
 /* ======Message Form===== */
+.message_form_container {
+	/* border: 1px solid blue; */
+	width: 100%;
+	height: 40px;
+	display: flex;
+	align-items: center;
+}
+
 .message_form {
-	/* position: absolute;
-	bottom: 0; */
+	/* border: 1px solid red; */
+	margin-inline: auto;
 	display: flex;
 	flex-direction: row;
 	width: 80%;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 1rem;
 }
 
 .message_form label svg {
@@ -289,4 +299,60 @@ form {
 	border-radius: 0.5rem;
 	border: none;
 	cursor: pointer;
+}
+
+/* =====Messages container */
+.messages_container {
+	width: 100%;
+	height: calc(100vh - 90px - 6.6rem);
+	overflow-y: auto;
+	padding-inline: 10px;
+	border-bottom: 1px solid black;
+}
+
+/* -->scrollbar definitions */
+.messages_container::-webkit-scrollbar {
+	width: 8px;
+}
+
+.messages_container::-webkit-scrollbar-thumb {
+	background: rgb(241, 125, 144);
+	border-radius: 10px;
+}
+
+.messages {
+	max-width: 50%;
+	width: fit-content;
+}
+
+.own {
+	text-align: right;
+	margin-left: auto;
+	background-color: yellow;
+	border-radius: 10px 0 10px 10px;
+}
+
+.friend {
+	text-align: left;
+	background-color: skyblue;
+	border-radius: 0 10px 10px 10px;
+}
+
+.messages p {
+	display: flex;
+	flex-direction: column;
+	padding: 10px;
+	gap: 4px;
+	margin: 5px;
+}
+
+.messages p small {
+	font-size: 1rem;
+	font-weight: bold;
+}
+
+.messages img {
+	width: 100%;
+	height: 50%;
+	object-fit: cover;
 }
